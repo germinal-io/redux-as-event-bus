@@ -1,27 +1,36 @@
 import { AnyAction, Middleware } from 'redux'
 
-export interface EventBus<TEvents extends AnyAction> {
-    onEvent: OnEvent<TEvents>
-    onAllEvents: OnAllEvents<TEvents>
+export interface EventBus<TEvents extends AnyAction, TResult> {
+    onEvent: OnEvent<TEvents, TResult>
+    onAllEvents: OnAllEvents<TEvents, TResult>
     onError: OnError
+    onResult: OnResult<TResult>
 }
 
-type OnEvent<TEvents extends AnyAction> = <TEvent extends TEvents>(
+type OnEvent<TEvents extends AnyAction, TResult> = <TEvent extends TEvents>(
     key: TEvent['type'],
-    handler: EventHandler<TEvent>
+    handler: EventHandler<TEvent, TResult>
 ) => void
 
-type OnAllEvents<TEvents extends AnyAction> = (
-    handler: EventHandler<TEvents>
+type OnAllEvents<TEvents extends AnyAction, TResult> = (
+    handler: EventHandler<TEvents, TResult>
 ) => void
 
 type OnError = (handler: ErrorHandler) => void
 
-type EventHandler<TEvent> = (event: TEvent) => void
-type ErrorHandler = (error: Error) => void
+type OnResult<TResult> = (handler: ResultHandler<TResult>) => void
 
-export function prepareEventBus<TEvents extends AnyAction>() {
-    const eventBus: EventBus<TEvents> = { onEvent, onAllEvents, onError }
+type EventHandler<TEvent, TResult> = (event: TEvent) => TResult
+type ErrorHandler = (error: Error) => void
+type ResultHandler<TResult> = (result: TResult) => void
+
+export function prepareEventBus<TEvents extends AnyAction, TResult>() {
+    const eventBus: EventBus<TEvents, TResult> = {
+        onEvent,
+        onAllEvents,
+        onError,
+        onResult,
+    }
     const eventBusMiddleware: Middleware = (store: unknown) => {
         return (next) => (action) => {
             const result = next(action)
@@ -31,9 +40,10 @@ export function prepareEventBus<TEvents extends AnyAction>() {
         }
     }
 
-    const oneEventHandlers: Record<string, EventHandler<any>[]> = {}
-    const allEventsHandlers: EventHandler<any>[] = []
+    const oneEventHandlers: Record<string, EventHandler<any, TResult>[]> = {}
+    const allEventsHandlers: EventHandler<any, TResult>[] = []
     const onErrorHandlers: ErrorHandler[] = []
+    const onResultHandlers: ResultHandler<TResult>[] = []
 
     function triggerHandlers(event: TEvents): void {
         getHandlers(event.type).map(triggerHandler(event))
@@ -41,9 +51,10 @@ export function prepareEventBus<TEvents extends AnyAction>() {
     }
 
     function triggerHandler<TEvent extends TEvents>(event: TEvent) {
-        return async (handler: EventHandler<TEvent>) => {
+        return async (handler: EventHandler<TEvent, TResult>) => {
             try {
-                await handler(event)
+                const result = await handler(event)
+                onResultHandlers.map((resultHandler) => resultHandler(result))
             } catch (error) {
                 onErrorHandlers.map((errorHandler) => errorHandler(error))
             }
@@ -60,17 +71,21 @@ export function prepareEventBus<TEvents extends AnyAction>() {
 
     function onEvent<TEvent extends TEvents>(
         key: TEvent['type'],
-        handler: EventHandler<TEvent>
+        handler: EventHandler<TEvent, TResult>
     ): void {
         getHandlers(key).push(handler)
     }
 
-    function onAllEvents(handler: EventHandler<TEvents>): void {
+    function onAllEvents(handler: EventHandler<TEvents, TResult>): void {
         allEventsHandlers.push(handler)
     }
 
     function onError(handler: ErrorHandler): void {
         onErrorHandlers.push(handler)
+    }
+
+    function onResult(handler: ResultHandler<TResult>): void {
+        onResultHandlers.push(handler)
     }
 
     return { eventBus, eventBusMiddleware }
