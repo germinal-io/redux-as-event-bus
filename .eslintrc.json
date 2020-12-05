@@ -1,0 +1,15 @@
+{
+    "$schema": "http://json.schemastore.org/eslintrc",
+    "root": true,
+    "extends": [
+        "@germinal-io/eslint-config"
+    ],
+    "env": {
+        "es6": true,
+        "node": true
+    },
+    "ignorePatterns": [
+        "node_modules",
+        "dist"
+    ]
+}

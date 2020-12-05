@@ -1,9 +1,12 @@
 ### Node ###
-/dist
-/node_modules
+dist
+node_modules
 
 ### macOS ###
 .DS_Store
 
 ### Webstorm ###
 .idea
+
+### ESLint ###
+.eslintcache
