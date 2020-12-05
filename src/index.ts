@@ -22,17 +22,25 @@ export function prepareEventBus<TEvents extends AnyAction>() {
         }
     }
 
-    const handlers: Record<string, Handler<any>> = {}
+    const handlers: Record<string, Handler<any>[]> = {}
 
     function triggerHandlers(event: TEvents): void {
-        handlers[event.type](event)
+        getHandlers(event.type).map((handler) => handler(event))
+    }
+
+    function getHandlers(key: string) {
+        if (!handlers[key]) {
+            handlers[key] = []
+        }
+
+        return handlers[key]
     }
 
     function onEvent<TEvent extends TEvents>(
         key: TEvent['type'],
         handler: Handler<TEvent>
     ): void {
-        handlers[key] = handler
+        getHandlers(key).push(handler)
     }
 
     return { eventBus, eventBusMiddleware }

@@ -31,4 +31,18 @@ describe('listen for a specific event', () => {
         // EXPECT
         listener.expectState(true)
     })
+
+    it('should trigger all handlers listening for the event', () => {
+        // GIVEN
+        const { eventBus, store } = prepareTest(defaultReducer)
+        const firstListener = prepareEventsListener()
+        const secondListener = prepareEventsListener()
+        eventBus.onEvent('FirstEvent', firstListener.handler)
+        eventBus.onEvent('FirstEvent', secondListener.handler)
+        // WHEN
+        store.dispatch(firstEvent())
+        // EXPECT
+        firstListener.expectEvents([firstEvent()])
+        secondListener.expectEvents([firstEvent()])
+    })
 })
