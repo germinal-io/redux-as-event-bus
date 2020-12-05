@@ -1,11 +1,11 @@
-import { AppEvent } from './events'
+import { AppEvent } from '../events'
 
-export interface Listener {
+interface Listener {
     handler: (event: AppEvent) => void
     expectEvents: (expectedEvents: AppEvent[]) => void
 }
 
-export function prepareListener(): Listener {
+export function prepareEventsListener(): Listener {
     const events: AppEvent[] = []
 
     function handler(event: AppEvent): void {

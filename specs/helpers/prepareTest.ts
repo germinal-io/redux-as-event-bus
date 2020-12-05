@@ -1,21 +1,22 @@
-import { applyMiddleware, createStore, Store } from 'redux'
+import { applyMiddleware, createStore, Reducer, Store } from 'redux'
 import { EventBus, prepareEventBus } from '../../src'
 import { AppEvent } from './events'
 
-export interface Test {
+export interface Test<TState> {
     eventBus: EventBus<AppEvent>
-    dispatch: (event: AppEvent) => void
+    store: AppStore<TState>
 }
 
-export type AppStore = Store<unknown, AppEvent>
+export type AppStore<TState> = Store<TState, AppEvent>
 
-export function prepareTest(): Test {
+export function prepareTest<TState>(
+    rootReducer: Reducer<TState, AppEvent>
+): Test<TState> {
     const { eventBus, eventBusMiddleware } = prepareEventBus()
-    const rootReducer = () => ({})
-    const store: AppStore = createStore(
+    const store: AppStore<TState> = createStore(
         rootReducer,
         applyMiddleware(eventBusMiddleware)
     )
 
-    return { eventBus, dispatch: store.dispatch }
+    return { eventBus, store }
 }

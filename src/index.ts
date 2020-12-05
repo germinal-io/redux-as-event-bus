@@ -15,9 +15,10 @@ export function prepareEventBus<TEvents extends AnyAction>() {
     const eventBus: EventBus<TEvents> = { onEvent }
     const eventBusMiddleware: Middleware = (store: unknown) => {
         return (next) => (action) => {
+            const result = next(action)
             triggerHandlers(action)
 
-            return next(action)
+            return result
         }
     }
 
