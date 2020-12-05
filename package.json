@@ -1,0 +1,17 @@
+{
+  "name": "redux-as-event-bus",
+  "version": "0.1.0",
+  "main": "index.js",
+  "scripts": {
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/germinal-io/redux-as-event-bus.git"
+  },
+  "author": "Germinal",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/germinal-io/redux-as-event-bus/issues"
+  },
+  "homepage": "https://github.com/germinal-io/redux-as-event-bus#readme"
+}
