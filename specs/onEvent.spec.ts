@@ -17,8 +17,8 @@ describe('listen for a specific event', () => {
         store.dispatch(firstEvent())
         store.dispatch(secondEvent())
         // EXPECT
-        firstListener.expectEvents([firstEvent()])
-        secondListener.expectEvents([secondEvent()])
+        firstListener.expectEvent(firstEvent())
+        secondListener.expectEvent(secondEvent())
     })
 
     it('should trigger handlers after state update', () => {
@@ -42,7 +42,7 @@ describe('listen for a specific event', () => {
         // WHEN
         store.dispatch(firstEvent())
         // EXPECT
-        firstListener.expectEvents([firstEvent()])
-        secondListener.expectEvents([firstEvent()])
+        firstListener.expectEvent(firstEvent())
+        secondListener.expectEvent(firstEvent())
     })
 })

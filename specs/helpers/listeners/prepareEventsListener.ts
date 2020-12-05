@@ -2,6 +2,7 @@ import { AppEvent } from '../events'
 
 interface Listener {
     handler: (event: AppEvent) => void
+    expectEvent: (expectedEvent: AppEvent) => void
     expectEvents: (expectedEvents: AppEvent[]) => void
 }
 
@@ -12,9 +13,13 @@ export function prepareEventsListener(): Listener {
         events.push(event)
     }
 
+    function expectEvent(expectedEvent: AppEvent): void {
+        expect(events).toEqual([expectedEvent])
+    }
+
     function expectEvents(expectedEvents: AppEvent[]): void {
         expect(events).toEqual(expectedEvents)
     }
 
-    return { handler, expectEvents }
+    return { handler, expectEvent, expectEvents }
 }
