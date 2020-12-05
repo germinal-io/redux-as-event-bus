@@ -20,7 +20,9 @@ type OnError = (handler: ErrorHandler) => void
 
 type OnResult<TResult> = (handler: ResultHandler<TResult>) => void
 
-type EventHandler<TEvent, TResult> = (event: TEvent) => TResult
+type EventHandler<TEvent, TResult> = (
+    event: TEvent
+) => TResult | Promise<TResult>
 type ErrorHandler = (error: Error) => void
 type ResultHandler<TResult> = (result: TResult) => void
 

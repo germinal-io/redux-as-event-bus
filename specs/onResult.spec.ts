@@ -9,7 +9,7 @@ import { defaultReducer } from './helpers/reducers/defaultReducer'
 describe('access handlers results', () => {
     it('should catch handlers results', async () => {
         // GIVEN
-        const { eventBus, store } = prepareTest(defaultReducer)
+        const { eventBus, store } = prepareTest<unknown, string>(defaultReducer)
         const listener = prepareResultListener()
         eventBus.onResult(listener.handler)
         eventBus.onEvent('FirstEvent', handlerResult('Value'))
@@ -22,7 +22,7 @@ describe('access handlers results', () => {
 
     it('should catch handlers asynchronous results', async () => {
         // GIVEN
-        const { eventBus, store } = prepareTest(defaultReducer)
+        const { eventBus, store } = prepareTest<unknown, string>(defaultReducer)
         const listener = prepareResultListener()
         eventBus.onResult(listener.handler)
         eventBus.onEvent('FirstEvent', asynchronousHandlerResult('Value'))
@@ -35,7 +35,7 @@ describe('access handlers results', () => {
 
     it('should trigger all result handlers', async () => {
         // GIVEN
-        const { eventBus, store } = prepareTest(defaultReducer)
+        const { eventBus, store } = prepareTest<unknown, string>(defaultReducer)
         const firstListener = prepareResultListener()
         const secondListener = prepareResultListener()
         eventBus.onResult(firstListener.handler)

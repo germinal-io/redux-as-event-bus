@@ -1,3 +1,3 @@
-export function defaultReducer() {
+export function defaultReducer(state: unknown): unknown {
     return {}
 }
