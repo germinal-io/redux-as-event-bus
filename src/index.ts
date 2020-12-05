@@ -3,21 +3,25 @@ import { AnyAction, Middleware } from 'redux'
 export interface EventBus<TEvents extends AnyAction> {
     onEvent: OnEvent<TEvents>
     onAllEvents: OnAllEvents<TEvents>
+    onError: OnError
 }
 
 type OnEvent<TEvents extends AnyAction> = <TEvent extends TEvents>(
     key: TEvent['type'],
-    handler: Handler<TEvent>
+    handler: EventHandler<TEvent>
 ) => void
 
 type OnAllEvents<TEvents extends AnyAction> = (
-    handler: Handler<TEvents>
+    handler: EventHandler<TEvents>
 ) => void
 
-type Handler<TEvent> = (event: TEvent) => void
+type OnError = (handler: ErrorHandler) => void
+
+type EventHandler<TEvent> = (event: TEvent) => void
+type ErrorHandler = (error: Error) => void
 
 export function prepareEventBus<TEvents extends AnyAction>() {
-    const eventBus: EventBus<TEvents> = { onEvent, onAllEvents }
+    const eventBus: EventBus<TEvents> = { onEvent, onAllEvents, onError }
     const eventBusMiddleware: Middleware = (store: unknown) => {
         return (next) => (action) => {
             const result = next(action)
@@ -27,8 +31,9 @@ export function prepareEventBus<TEvents extends AnyAction>() {
         }
     }
 
-    const oneEventHandlers: Record<string, Handler<any>[]> = {}
-    const allEventsHandlers: Handler<any>[] = []
+    const oneEventHandlers: Record<string, EventHandler<any>[]> = {}
+    const allEventsHandlers: EventHandler<any>[] = []
+    const onErrorHandlers: ErrorHandler[] = []
 
     function triggerHandlers(event: TEvents): void {
         getHandlers(event.type).map(triggerHandler(event))
@@ -36,8 +41,12 @@ export function prepareEventBus<TEvents extends AnyAction>() {
     }
 
     function triggerHandler<TEvent extends TEvents>(event: TEvent) {
-        return (handler: Handler<TEvent>) => {
-            handler(event)
+        return async (handler: EventHandler<TEvent>) => {
+            try {
+                await handler(event)
+            } catch (error) {
+                onErrorHandlers.map((errorHandler) => errorHandler(error))
+            }
         }
     }
 
@@ -51,13 +60,17 @@ export function prepareEventBus<TEvents extends AnyAction>() {
 
     function onEvent<TEvent extends TEvents>(
         key: TEvent['type'],
-        handler: Handler<TEvent>
+        handler: EventHandler<TEvent>
     ): void {
         getHandlers(key).push(handler)
     }
 
-    function onAllEvents(handler: Handler<TEvents>): void {
+    function onAllEvents(handler: EventHandler<TEvents>): void {
         allEventsHandlers.push(handler)
+    }
+
+    function onError(handler: ErrorHandler): void {
+        onErrorHandlers.push(handler)
     }
 
     return { eventBus, eventBusMiddleware }
