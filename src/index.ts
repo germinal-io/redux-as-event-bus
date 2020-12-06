@@ -1,6 +1,6 @@
 import { AnyAction, Middleware } from 'redux'
 
-export interface EventBus<TEvents extends AnyAction, TResult> {
+export interface EventBus<TEvents extends AnyAction, TResult = unknown> {
     onEvent: OnEvent<TEvents, TResult>
     onAllEvents: OnAllEvents<TEvents, TResult>
     onError: OnError
@@ -26,7 +26,10 @@ type EventHandler<TEvent, TResult> = (
 type ErrorHandler = (error: Error) => void
 type ResultHandler<TResult> = (result: TResult) => void
 
-export function prepareEventBus<TEvents extends AnyAction, TResult>() {
+export function prepareEventBus<
+    TEvents extends AnyAction,
+    TResult = unknown
+>() {
     const eventBus: EventBus<TEvents, TResult> = {
         onEvent,
         onAllEvents,
