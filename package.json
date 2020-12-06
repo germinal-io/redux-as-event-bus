@@ -20,6 +20,9 @@
         "url": "https://github.com/germinal-io/redux-as-event-bus/issues"
     },
     "homepage": "https://github.com/germinal-io/redux-as-event-bus",
+    "peerDependencies": {
+        "redux": "^4"
+    },
     "devDependencies": {
         "@germinal-io/eslint-config": "^1.0.3",
         "@types/jest": "^26.0.16",
