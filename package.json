@@ -1,8 +1,10 @@
 {
     "name": "redux-as-event-bus",
     "version": "0.1.0",
-    "main": "index.js",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
     "scripts": {
+        "build": "tsc",
         "lint": "eslint . --ext .js,.ts,.tsx --cache",
         "test": "jest",
         "test:watch": "jest --watch"
