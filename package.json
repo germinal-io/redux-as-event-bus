@@ -18,7 +18,7 @@
     "bugs": {
         "url": "https://github.com/germinal-io/redux-as-event-bus/issues"
     },
-    "homepage": "https://github.com/germinal-io/redux-as-event-bus#readme",
+    "homepage": "https://github.com/germinal-io/redux-as-event-bus",
     "devDependencies": {
         "@germinal-io/eslint-config": "^1.0.3",
         "@types/jest": "^26.0.16",
