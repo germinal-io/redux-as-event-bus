@@ -7,6 +7,11 @@ export interface EventBus<TEvents extends AnyAction, TResult = unknown> {
     onResult: OnResult<TResult>
 }
 
+interface PrepareEventBusResult<TEvents extends AnyAction, TResult> {
+    eventBus: EventBus<TEvents, TResult>
+    eventBusMiddleware: Middleware
+}
+
 type OnEvent<TEvents extends AnyAction, TResult> = <TEvent extends TEvents>(
     key: TEvent['type'],
     handler: EventHandler<TEvent, TResult>
@@ -29,7 +34,7 @@ type ResultHandler<TResult> = (result: TResult) => void
 export function prepareEventBus<
     TEvents extends AnyAction,
     TResult = unknown
->() {
+>(): PrepareEventBusResult<TEvents, TResult> {
     const eventBus: EventBus<TEvents, TResult> = {
         onEvent,
         onAllEvents,

@@ -1,5 +1,5 @@
 export function throwErrorAsynchronously(message: string) {
-    return async () => {
+    return async (): Promise<void> => {
         throw new Error(message)
     }
 }

@@ -1,3 +1,3 @@
 export function asynchronousHandlerResult<TValue>(value: TValue) {
-    return async () => value
+    return async (): Promise<TValue> => value
 }

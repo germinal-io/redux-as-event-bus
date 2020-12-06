@@ -1,5 +1,5 @@
 export function throwError(message: string) {
-    return () => {
+    return (): void => {
         throw new Error(message)
     }
 }
