@@ -1,5 +1,5 @@
 {
-    "name": "redux-as-event-bus",
+    "name": "@germinal-io/redux-as-event-bus",
     "version": "0.1.2",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
